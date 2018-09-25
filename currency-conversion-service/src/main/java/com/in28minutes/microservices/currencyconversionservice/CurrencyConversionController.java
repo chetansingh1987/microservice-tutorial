@@ -1,4 +1,4 @@
-package com.in28minutes.microservices.currencyexchangeservice;
+package com.in28minutes.microservices.currencyconversionservice;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -18,6 +18,18 @@ public class CurrencyConversionController {
 	@Autowired
 	Environment environment;
 	
+	@Autowired
+	CurrencyExchangeServiceProxy currencyExchangeService;
+	
+	@GetMapping("/currency-converter-feign/from/{from}/to/{to}/{quantity}")
+	public CurrencyConversionBean retrieveConvertedValueFeign(@PathVariable String from,@PathVariable  String to,@PathVariable  BigDecimal quantity) {
+		CurrencyConversionBean response = currencyExchangeService.retrieveExchangeValue(from, to);
+		BigDecimal value = quantity.multiply(response.getConversionMultiple());
+		CurrencyConversionBean ev = new CurrencyConversionBean(response.getId(), from, to, response.getConversionMultiple(), quantity, value);
+		ev.setPort(Integer.parseInt(environment.getProperty("local.server.port")));
+		
+		return ev;
+	}	
 	
 	@GetMapping("/currency-converter/from/{from}/to/{to}/{quantity}")
 	public CurrencyConversionBean retrieveConvertedValue(@PathVariable String from,@PathVariable  String to,@PathVariable  BigDecimal quantity) {
