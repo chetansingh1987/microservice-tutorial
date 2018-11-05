@@ -26,7 +26,7 @@ public class CurrencyConversionController {
 		CurrencyConversionBean response = currencyExchangeService.retrieveExchangeValue(from, to);
 		BigDecimal value = quantity.multiply(response.getConversionMultiple());
 		CurrencyConversionBean ev = new CurrencyConversionBean(response.getId(), from, to, response.getConversionMultiple(), quantity, value);
-		ev.setPort(Integer.parseInt(environment.getProperty("local.server.port")));
+		ev.setPort(response.getPort());
 		
 		return ev;
 	}	
